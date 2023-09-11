@@ -36,26 +36,27 @@ services:
     # depends_on:
     #   - zookeeper
     # network_mode: "host"
-  # kafka-ui:
-  #   container_name: kafka-ui
-  #   image: provectuslabs/kafka-ui:latest
-  #   ports:
-  #     - 9090:8080
-  #   environment:
-  #     - DYNAMIC_CONFIG_ENABLED='true'
-  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-  #     - KAFKA_CLUSTERS_0_NAME=local
-  #   volumes:
-  #     - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
-  #   depends_on:
-  #     - kafka
-  conduktor:
-    image: conduktor/conduktor-platform:latest
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
     ports:
-      - "9080:8080"
+      - 9090:8080
+    environment:
+      - DYNAMIC_CONFIG_ENABLED='true'
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-1:9092,kafka-2:9092
+      - KAFKA_CLUSTERS_0_NAME=kafka@local
+    volumes:
+      - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
     depends_on:
       - kafka-1
       - kafka-2
+  # conduktor:
+  #   image: conduktor/conduktor-platform:latest
+  #   ports:
+  #     - "9080:8080"
+  #   depends_on:
+  #     - kafka-1
+  #     - kafka-2
   connect:
       image: debezium/connect
       ports:
@@ -84,4 +85,43 @@ services:
       - "max_replication_slots=4"
       - "-c"
       - "wal_level=logical"
+  debezium-ui:
+    image: debezium/debezium-ui:latest
+    ports:
+      - "7080:8080"
+    environment:
+      - KAFKA_CONNECT_URIS=http://connect:8083
+    depends_on:
+      - connect
+  ksqldb-server:
+    image: confluentinc/ksqldb-server:latest
+    hostname: ksqldb-server
+    container_name: ksqldb-server
+    depends_on:
+      - kafka-2
+    ports:
+      - "8088:8088"
+    environment:
+      KSQL_LISTENERS: http://0.0.0.0:8088
+      KSQL_BOOTSTRAP_SERVERS: kafka-2:9092
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
+  postgres-clean:
+    image: postgres:latest
+    hostname: postgres-clean
+    container_name: postgres-clean
+    ports:
+      - "8765:5432"
+    environment:
+      - POSTGRES_PASSWORD=root
+  ksqldb-cli:
+    image: confluentinc/ksqldb-cli:latest
+    container_name: ksqldb-cli
+    depends_on:
+      - kafka-2
+      - ksqldb-server
+    entrypoint: /bin/sh
+    tty: true
+
+    
 
