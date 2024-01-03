@@ -1,0 +1,86 @@
+// curl -i -X GET http://debezium--preproduction.service.consul/connectors/impostor-b2c-sailfish-feed_order_so_odoos/version
+
+
+curl http://debezium-ui--preproduction.service.consul/api/connector/1/postgres -X POST -H 'Content-Type: application/json' -k -d '{
+    "name": "impostor-b2c-sailfish-feed_order_so_odoos-uat",
+    "config": {
+      "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+      "tasks.max": "1",
+      "topic.prefix": "impostor.b2c.sailfish",
+      "database.hostname": "postgres-sailfish--stg.service.consul",
+      "database.port": "5443",
+      "database.user": "debezium",
+      "database.password": "tweEuz8jYzQhfQ",
+      "database.dbname": "sailfish",
+      "database.sslmode": "disable",
+      "database.sslcert": "",
+      "database.sslkey": "",
+      "database.sslpassword": "",
+      "database.sslrootcert": "",
+      "publication.name": "debezium_impostor_publication",
+      "publication.autocreate.mode": "filtered",
+      "slot.name": "debezium_slot_impostor_feed_order_so_odoos",
+      "plugin.name": "pgoutput",
+      "replica.identity.autoset.values": "public.feed_order_so_odoos:FULL",
+      "slot.drop.on.stop": "false",
+      "schema.include.list": "public",
+      "table.include.list": "public.feed_order_so_odoos",
+      "time.precision.mode": "adaptive",
+      "decimal.handling.mode": "precise",
+      "hstore.handling.mode": "map",  
+      "interval.handling.mode": "numeric",
+      "tombstones.on.delete": "true",
+      "snapshot.mode": "never",
+      "snapshot.lock.timeout.ms": "10000",
+      "snapshot.select.statement.overrides": "",
+      "event.processing.failure.handling.mode": "warn",
+      "max.queue.size": "20240",
+      "max.batch.size": "10240",
+      "poll.interval.ms": "1000",
+      "include.unknown.datatypes": "true",
+      "heartbeat.interval.ms": "5000",
+      "heartbeat.topics.prefix": "__debezium-heartbeat-impostor-feed_order_so_odoos",
+      "schema.refresh.mode": "columns_diff",
+      "snapshot.fetch.size": "10240",
+      "slot.stream.params": "",
+      "slot.max.retries": "6",
+      "slot.retry.delay.ms": "10000",
+      "toasted.value.placeholder": "__debezium_unavailable_value",
+      "key.converter.schemas.enable": "false",
+      "value.converter.schemas.enable": "false",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "key.converter": "org.apache.kafka.connect.json.JsonConverter"
+    }
+  }'
+
+
+  curl http://debezium-ui--preproduction.service.consul/api/connector/1/postgres -X POST -H 'Content-Type: application/json' -k -d '{
+    "name": "impostor-b2c-sailfish-feed_order_so_odoos",
+    "config": {
+      "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+      "topic.prefix": "impostor.b2c.sailfish-",
+      "database.hostname": "postgres-sailfish--stg.service.consul",
+      "database.port": "5443",
+      "database.user": "debezium",
+      "database.password": "tweEuz8jYzQhfQ",
+      "database.dbname": "sailfish",
+      "database.sslmode": "disable",
+      "publication.name": "debezium_impostor_publication",
+      "publication.autocreate.mode": "disabled",
+      "slot.name": "debezium_slot_impostor_feed_order_so_odoos",
+      "plugin.name": "pgoutput",
+      "replica.identity.autoset.values": "public.feed_order_so_odoos:FULL",
+      "slot.drop.on.stop": "false",
+      "schema.include.list": "public",
+      "table.include.list": "public.feed_order_so_odoos",
+      "snapshot.mode": "never",
+      "heartbeat.interval.ms": "10000",
+      "heartbeat.topics.prefix": "__debezium-heartbeat-impostor-feed_order_so_odoos",
+      "schema.refresh.mode": "columns_diff",
+      "key.converter.schemas.enable": "false",
+      "value.converter.schemas.enable": "false",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "key.converter": "org.apache.kafka.connect.json.JsonConverter"
+    }
+  }'
+  
