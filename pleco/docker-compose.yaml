@@ -1,0 +1,46 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=root
+    command: 
+      - "postgres"
+      - "-c"
+      - "max_wal_senders=4"
+      - "-c"
+      - "max_replication_slots=4"
+      - "-c"
+      - "wal_level=logical"
+  pleco-service:
+    image: pleco:latest
+    ports:
+      - "8080:8080"
+      - "4040:4040"
+    environment:
+      - DB_USER=postgres
+      - DB_PASS=root
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=pleco
+      - DB_LOG_LEVEL=1
+    depends_on:
+      - postgres
+    command: ["rest"]
+  pleco-service-consumer:
+    image: pleco:latest
+    ports:
+      - "8081:8080"
+      - "4041:4041"
+    environment:
+      - DB_USER=postgres
+      - DB_PASS=root
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=pleco
+      - DB_LOG_LEVEL=1
+    depends_on:
+      - postgres
+    command: ["consumer"]

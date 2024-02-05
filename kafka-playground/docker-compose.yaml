@@ -127,6 +127,7 @@ services:
     ports:
       - "5001:5001"
       - "4000:4000"
+    
     environment:
       - APP_ENV=staging
       - APP_HOST=
@@ -182,6 +183,8 @@ services:
         limits:
           cpus: '0.128'
           memory: 256M
+      restart_policy:
+        condition:
     depends_on:
       - postgres
       - rabbitmq
